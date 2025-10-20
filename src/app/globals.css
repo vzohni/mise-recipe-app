@@ -1,18 +1,28 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  body {
-    @apply bg-[#F2EBE3] text-[#222222];
-    font-family: var(--font-roboto-flex), sans-serif;
-  }
+:root {
+  --background: #fafafa;
+  --foreground: #222222;
+  --primary: #2e4442;
+  --tan: #f2ebe3;
+  --font-fraunces: "Fraunces", serif;
+  --font-roboto-flex: "Roboto Flex", sans-serif;
 }
 
 .font-serif {
-  font-family: var(--font-fraunces), serif !important;
+  font-family: var(--font-fraunces), serif;
+}
+.font-sans-serif {
+  font-family: var(--font-roboto-flex), sans-serif;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-fraunces), serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
 }
