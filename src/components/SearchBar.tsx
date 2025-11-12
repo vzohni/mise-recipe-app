@@ -1,6 +1,6 @@
 export default function SearchBar() {
   return (
-    <div className="relative max-w-2xl">
+    <div className="relative max-w-2xl w-full">
       <input
         type="text"
         placeholder="Search recipes..."

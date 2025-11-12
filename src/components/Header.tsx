@@ -3,16 +3,18 @@ export default function Header() {
   return (
     <header>
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <img src="/Mise_Logo.svg" alt="" />
+        <a href="/">
+          <img src="/Mise_Logo.svg" alt="Mise Logo" />
+        </a>
         <div className="flex flex-row gap-6 font-serif">
           <a className="text-xl" href="/">
-            Home
+        Home
           </a>
           <a className="text-xl" href="/account">
-            Account
+        Account
           </a>
           <a className="text-xl" href="/add-recipe">
-            Add Recipe
+        Add Recipe
           </a>
         </div>
       </nav>
