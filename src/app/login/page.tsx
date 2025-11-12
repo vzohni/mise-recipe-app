@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { useState } from "react";
 
-const primary = "#2e4442"
+const primary = "#2e4442";
 
 export default function Login() {
   const [isSignup, setIsSignup] = useState(false);
@@ -31,12 +31,16 @@ export default function Login() {
 
   return (
     <div className="flex-row h-screen flex">
-      <div className="w-1/2 bg-[#F2EBE3] align-middle justify-center flex flex-col px-20 gap-6 text-center">
-        <div className="absolute top-5 left-10">
+      <div className="w-1/2 bg-(--tan) align-bottom justify-end flex flex-col px-20 gap-6 text-center">
+        <a href="/" className="absolute top-5 left-10">
           <img src="/Mise_Logo_White.svg" alt="" />
+        </a>
+
+        <h1 className="text-4xl leading-2 font-semibold text-(--primary)">Find Your Next Dish</h1>
+        <h2 className="font-sans-serif">Hundreds of recipes, to your taste</h2>
+        <div className="">
+          <img src="/chef.png" alt="" />
         </div>
-        <h1 className="text-3xl font-semibold text-[#2e4442]">Find Your Next Dish</h1>
-        <h2>Hundreds of recipes, to your taste</h2>
       </div>
       <div className="w-1/2 flex items-center justify-center px-20">
         <div className="w-full max-w-md">
@@ -44,7 +48,7 @@ export default function Login() {
             // Login Form
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               <h2 className="text-2xl font-semibold text-center text-{primary}">Login</h2>
-              
+
               <div className="flex flex-col gap-2">
                 <label htmlFor="email" className="font-medium text-gray-700">
                   Email
@@ -56,7 +60,7 @@ export default function Login() {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4A574]"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary)"
                   placeholder="Enter your email"
                 />
               </div>
@@ -72,20 +76,20 @@ export default function Login() {
                   value={formData.password}
                   onChange={handleInputChange}
                   required
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2e4442]"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary)"
                   placeholder="Enter your password"
                 />
               </div>
 
               <div className="text-right">
-                <a href="#" className="text-sm text-[#D4A574] hover:underline">
+                <a href="#" className="text-sm text-(--primary) hover:underline">
                   Forgot Password?
                 </a>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-[#D4A574] text-white font-semibold py-2 rounded-lg hover:bg-[#C49464] transition"
+                className="w-full bg-(--primary) text-white font-semibold py-2 rounded-lg hover:bg-(--hover) transition"
               >
                 Login
               </button>
@@ -96,7 +100,7 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => setIsSignup(true)}
-                    className="text-[#D4A574] font-semibold hover:underline"
+                    className="text-(--primary) font-semibold hover:underline cursor-pointer"
                   >
                     Sign Up
                   </button>
@@ -169,7 +173,7 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => setIsSignup(false)}
-                    className="text-[#D4A574] font-semibold hover:underline"
+                    className="text-[#D4A574] font-semibold hover:underline cursor-pointer"
                   >
                     Login
                   </button>

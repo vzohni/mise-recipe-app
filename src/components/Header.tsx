@@ -1,4 +1,5 @@
-import MiseLogo from "next/image";
+"use client";
+
 export default function Header() {
   return (
     <header>
@@ -8,16 +9,24 @@ export default function Header() {
         </a>
         <div className="flex flex-row gap-6 font-serif">
           <a className="text-xl" href="/">
-        Home
+            Home
           </a>
-          <a className="text-xl" href="/account">
-        Account
+          <a className="text-xl" href="/account/1">
+            Account
+          </a>
+          <a className="text-xl" href="/login">
+            Login
           </a>
           <a className="text-xl" href="/add-recipe">
-        Add Recipe
+            Add Recipe
           </a>
         </div>
       </nav>
+      <div className="container mx-auto">
+        <hr className="bg-(--primary)" />
+        <hr className="bg-(--primary)" />
+        <hr className="bg-(--primary)" />
+      </div>
     </header>
   );
 }

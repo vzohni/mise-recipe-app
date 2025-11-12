@@ -60,20 +60,19 @@ export default function RecipeCard({ image, title, author, date, tags }: RecipeC
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
         </svg>
       </button>
-      <img src={image} alt={title} className="w-full h-48 object-cover rounded-2xl" />
-      <div className="flex justify-center gap-2">
+      <img src={image} alt={title} className="w-full h-48 object-cover rounded-t-2xl" />
+      <div className="flex justify-center gap-2 -m-7 mb-1">
         {tags.map((tag, index) => (
           <span
             key={index}
-            className="text-[#222222] rounded-full text-sm"
-            style={{ backgroundColor: "#FAFAFA", padding: "4px 12px" }}
+            className="text-(--primary) rounded-full text-sm bg-white px-3 py-1 font-serif font-semibold"
           >
             {tag}
           </span>
         ))}
       </div>
       <div className="text-center pb-5">
-        <h2 className="text-xl font-serif font-bold">{title}</h2>
+        <h1 className="text-2xl font-serif font-bold text-(--primary)">{title}</h1>
         <p className="text-sm text-gray-600">
           By {author} - {date}
         </p>

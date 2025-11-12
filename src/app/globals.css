@@ -3,8 +3,10 @@
 :root {
   --background: #fafafa;
   --foreground: #222222;
-  --primary: #2e4442;
+  --primary: #2E4442;
   --tan: #f2ebe3;
+  --hover: #2F5C58;
+  --hover-tan: #EDD7BE;
   --font-fraunces: "Fraunces", serif;
   --font-roboto-flex: "Roboto Flex", sans-serif;
 }
