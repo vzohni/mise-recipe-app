@@ -4,10 +4,21 @@ import Button from "@/components/Button";
 import { dummyRecipes } from "@/data/recipes";
 import Link from "next/link";
 import RecipeCard from "@/components/RecipeCard";
+import { supabase } from "@/lib/supabase";
+import { notFound } from "next/navigation";
+
+interface Recipe {
+  slug: string;
+  image: string;
+  title: string;
+  author: string;
+  date: string;
+  tags: string[];
+}
 
 export default function Account() {
   // For demonstration - set to empty array to test "no recipes" message
-  const favouriteRecipes: any = [];
+  const favouriteRecipes: Recipe[] = [];
 
   return (
     <div className="flex flex-col min-h-screen bg-(--background)">

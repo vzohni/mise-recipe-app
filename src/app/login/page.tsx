@@ -1,19 +1,22 @@
 "use client";
 
 import Button from "@/components/Button";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import { useState } from "react";
-
-const primary = "#2e4442";
+import { signIn, signUp } from "@/lib/auth"; 
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Login() {
-  const [isSignup, setIsSignup] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
   });
+
+  const searchParams = useSearchParams();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -23,10 +26,27 @@ export default function Login() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Handle login/signup logic here
+    setError("");
+    setLoading(true);
+
+    try {
+      if (isSignUp) {
+        const { error } = await signUp(formData.email, formData.password, formData.name);
+        if (error) throw error;
+        alert("Check your email to confirm your account!");
+      } else {
+        const { error } = await signIn(formData.email, formData.password);
+        if (error) throw error;
+        const redirectTo = searchParams.get("redirect") || "/";
+        router.push(redirectTo);
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -44,10 +64,10 @@ export default function Login() {
       </div>
       <div className="w-1/2 flex items-center justify-center px-20">
         <div className="w-full max-w-md">
-          {!isSignup ? (
+          {!isSignUp ? (
             // Login Form
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              <h2 className="text-2xl font-semibold text-center text-{primary}">Login</h2>
+              <h2 className="text-2xl font-semibold text-center text-(--primary)">Login</h2>
 
               <div className="flex flex-col gap-2">
                 <label htmlFor="email" className="font-medium text-gray-700">
@@ -87,19 +107,18 @@ export default function Login() {
                 </a>
               </div>
 
-              <button
-                type="submit"
-                className="w-full bg-(--primary) text-white font-semibold py-2 rounded-lg hover:bg-(--hover) transition"
-              >
-                Login
-              </button>
+              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
+              </Button>
 
               <div className="text-center">
                 <p className="text-gray-600">
                   Don't have an account?{" "}
                   <button
                     type="button"
-                    onClick={() => setIsSignup(true)}
+                    onClick={() => setIsSignUp(true)}
                     className="text-(--primary) font-semibold hover:underline cursor-pointer"
                   >
                     Sign Up
@@ -114,13 +133,13 @@ export default function Login() {
 
               <div className="flex flex-col gap-2">
                 <label htmlFor="username" className="font-medium text-gray-700">
-                  Username
+                  Full Name
                 </label>
                 <input
                   type="text"
-                  id="username"
-                  name="username"
-                  value={formData.username}
+                  id="name"
+                  name="name"
+                  value={formData.name}
                   onChange={handleInputChange}
                   required
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D4A574]"
@@ -159,20 +178,22 @@ export default function Login() {
                   placeholder="Create a password"
                 />
               </div>
+              {error && <p className="text-red-500 text-sm">{error}</p>}
 
-              <button
-                type="submit"
-                className="w-full bg-[#D4A574] text-white font-semibold py-2 rounded-lg hover:bg-[#C49464] transition"
-              >
+              {/* <Button type="submit" className="w-full" variant="tan">
                 Sign Up
-              </button>
+              </Button> */}
+
+              <Button type="submit" className="w-full" variant="tan" disabled={loading}>
+                {loading ? "Loading..." : "Sign Up"}
+              </Button>
 
               <div className="text-center">
                 <p className="text-gray-600">
                   Already have an account?{" "}
                   <button
                     type="button"
-                    onClick={() => setIsSignup(false)}
+                    onClick={() => setIsSignUp(false)}
                     className="text-[#D4A574] font-semibold hover:underline cursor-pointer"
                   >
                     Login

@@ -1,17 +1,26 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { dummyRecipes } from "@/data/recipes";
+import { supabase } from "@/lib/supabase";
+import { formatDate } from "@/lib/utils";
 
 interface RecipePageProps {
   params: { slug: string };
 }
 
-export default async function RecipePage({ params }: RecipePageProps) {
-  const { slug } = await params;
+export default async function RecipePage({ params }: { params: { slug: string } }) {
+  // Fetch recipe by slug
 
+  const { data: recipe, error } = await supabase.from("recipes").select("*").eq("slug", params.slug).single();
+
+  if (error || !recipe) {
+    //notFound(); // Shows 404 page
+    console.error("Error fetching recipe:", error);
+    return null;
+  }
   // You can fetch your recipe data here based on `slug`
   // For example, fetch from an API or database
-  const recipe = dummyRecipes.find((r) => String(r.slug) === slug);
+  //const recipe = recipes?.find((r) => String(r.slug) === slug);
 
   return (
     <div className="flex flex-col min-h-screen bg-(--background)">
@@ -43,18 +52,21 @@ export default async function RecipePage({ params }: RecipePageProps) {
 
             <h1 className="text-3xl font-semibold text-(--primary)">{recipe ? recipe.title : "Recipe not found"}</h1>
             <p className="text-sm  mt-2">
-              {recipe?.author ? `By ${recipe.author}` : "Unknown author"} • {recipe?.date}
+              {recipe?.author ? `By ${recipe.author}` : "Unknown author"} •{" "}
+              {recipe?.created_at ? formatDate(recipe.created_at) : "Unknown date"}
             </p>
 
             <div className="mt-4">
-              <span className="inline-block text-sm  rounded-lg  font-medium">{recipe?.prepTime ?? "—"}</span>
+              <span className="inline-block text-sm rounded-lg font-medium">
+                Prep Time: {recipe?.prep_time ? `${recipe.prep_time} min` : "—"}
+              </span>
             </div>
             <p className="leading-relaxed mb-6">{recipe?.description}</p>
 
             <div className="mt-4 flex flex-wrap gap-2">
               {recipe?.tags?.length ? (
                 recipe.tags.map((tag, i) => (
-                  <span key={i} className="text-sm bg-(--primary) text-white px-3 py-1 rounded-full font-serif">
+                  <span key={i} className="text-sm bg-(--primary) text-white px-3 py-1 rounded-full font-serif text-transform: capitalize">
                     {tag}
                   </span>
                 ))
@@ -65,9 +77,13 @@ export default async function RecipePage({ params }: RecipePageProps) {
           </div>
 
           <div className="w-full h-[360px] overflow-hidden bg-gray-800 flex items-center justify-center">
-            {recipe?.image ? (
+            {recipe?.image_url ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={recipe.image} alt={recipe?.title ?? "Recipe image"} className="w-full h-full object-cover" />
+              <img
+                src={recipe.image_url}
+                alt={recipe?.title ?? "Recipe image"}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <div className="">No image available</div>
             )}
@@ -79,7 +95,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
             <h2 className="text-lg font-semibold ">Ingredients</h2>
             <ul className="grid grid-cols-2 gap-x-6 gap-y-2 list-disc list-inside">
               {recipe?.ingredients?.length ? (
-                recipe.ingredients.map((ingredient, index) => (
+                recipe.ingredients.map((ingredient: string, index: number) => (
                   <li key={index} className="text-sm">
                     {ingredient}
                   </li>
@@ -94,7 +110,7 @@ export default async function RecipePage({ params }: RecipePageProps) {
             <h2 className="text-lg font-semibold  mb-3">Instructions</h2>
             <ol className="space-y-4">
               {recipe?.instructions?.length ? (
-                recipe.instructions.map((instruction, index) => (
+                recipe.instructions.map((instruction: string, index: number) => (
                   <li key={index} className="flex items-start gap-4">
                     <div className="flex-none w-8 h-8 rounded-full bg-(--primary) text-white grid place-items-center font-medium">
                       {index + 1}
