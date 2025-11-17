@@ -4,8 +4,22 @@ import Header from "@/components/Header";
 import Button from "@/components/Button";
 import { useState } from "react";
 
+type Difficulty = "easy" | "medium" | "hard";
+
+interface RecipeFormData {
+  name: string;
+  image: string;
+  description: string;
+  prepTime: string;
+  cookTime: string;
+  servings: string;
+  difficulty: Difficulty;
+  ingredients: string[];
+  instructions: string[];
+}
+
 export default function AddRecipe() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RecipeFormData>({
     name: "",
     image: "",
     description: "",
@@ -13,42 +27,39 @@ export default function AddRecipe() {
     cookTime: "",
     servings: "",
     difficulty: "easy",
-    ingredients: [""],
-    instructions: [""]
+    ingredients: [""] as string[],
+    instructions: [""] as string[],
   });
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleArrayInputChange = (index: number, field: "ingredients" | "instructions", value: string) => {
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [field]: prev[field].map((item, i) => (i === index ? value : item)),
     }));
   };
 
-  const handleArrayInputChange = (index, field, value) => {
-    setFormData(prev => ({
+  const addItem = (field: "ingredients" | "instructions") => {
+    setFormData((prev) => ({
       ...prev,
-      [field]: prev[field].map((item, i) => i === index ? value : item)
+      [field]: [...prev[field], ""],
     }));
   };
 
-  const addItem = (field) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: [...prev[field], ""]
-    }));
-  };
-
-  const removeItem = (field, index) => {
+  const removeItem = (field: "ingredients" | "instructions", index: number) => {
     if (formData[field].length > 1) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [field]: prev[field].filter((_, i) => i !== index)
+        [field]: prev[field].filter((_, i) => i !== index),
       }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
     // Handle form submission here
@@ -58,7 +69,7 @@ export default function AddRecipe() {
     <div className="flex flex-col min-h-screen bg-(--background)">
       <Header />
 
-      <main className="container mx-auto px-4 flex flex-col mb-20 flex-1">
+      <main className="container mx-auto px-4 flex flex-col mb-20 flex-1 justify-center items-center">
         <h1 className="text-3xl font-semibold mt-8 text-(--primary) mb-6">Add Recipe</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
@@ -180,9 +191,7 @@ export default function AddRecipe() {
 
           {/* Ingredients */}
           <div>
-            <label className="block text-sm font-medium text-(--primary) mb-2">
-              Ingredients
-            </label>
+            <label className="block text-sm font-medium text-(--primary) mb-2">Ingredients</label>
             {formData.ingredients.map((ingredient, index) => (
               <div key={index} className="flex gap-2 mb-2">
                 <input
@@ -195,7 +204,7 @@ export default function AddRecipe() {
                 <button
                   type="button"
                   onClick={() => removeItem("ingredients", index)}
-                  className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                  className="cursor-pointer px-3 py-2 bg-red-700 text-white rounded-md hover:bg-red-600"
                   disabled={formData.ingredients.length === 1}
                 >
                   -
@@ -204,7 +213,7 @@ export default function AddRecipe() {
                   <button
                     type="button"
                     onClick={() => addItem("ingredients")}
-                    className="px-3 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                    className="cursor-pointer px-3 py-2 bg-(--primary) text-white rounded-md hover:bg-(--hover)"
                   >
                     +
                   </button>
@@ -215,9 +224,7 @@ export default function AddRecipe() {
 
           {/* Instructions */}
           <div>
-            <label className="block text-sm font-medium text-(--primary) mb-2">
-              Instructions
-            </label>
+            <label className="block text-sm font-medium text-(--primary) mb-2">Instructions</label>
             {formData.instructions.map((instruction, index) => (
               <div key={index} className="mb-4">
                 <div className="flex gap-2 mb-2">
@@ -225,7 +232,7 @@ export default function AddRecipe() {
                   <button
                     type="button"
                     onClick={() => removeItem("instructions", index)}
-                    className="px-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-sm"
+                    className="px-2 bg-red-700 text-white rounded-md hover:bg-red-600 text-sm"
                     disabled={formData.instructions.length === 1}
                   >
                     -
@@ -234,7 +241,7 @@ export default function AddRecipe() {
                     <button
                       type="button"
                       onClick={() => addItem("instructions")}
-                      className="px-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm"
+                      className="px-2 bg-(--primary) text-white rounded-md hover:bg-(--hover) text-sm"
                     >
                       +
                     </button>

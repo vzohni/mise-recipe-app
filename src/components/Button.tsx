@@ -12,7 +12,7 @@ export default function Button({
 
   const variants = {
     primary: "bg-(--primary) text-white hover:bg-(--hover) hover:bg-opacity-80",
-    secondary: "bg-white text-[#2E4442] border-2 border-[#2E4442] hover:bg-gray-50",
+    secondary: "bg-white text-[#2E4442] border-2 border-[#2E4442] hover:bg-(--hover) hover:text-white",
   };
 
   return (

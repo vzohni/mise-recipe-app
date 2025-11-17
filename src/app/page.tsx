@@ -8,7 +8,7 @@ import Link from "next/link";
 
 export default function Home() {
   // Extract all unique tags from dummyRecipes
-  const allTags = [...new Set(dummyRecipes.flatMap(recipe => recipe.tags))];
+  const allTags = [...new Set(dummyRecipes.flatMap((recipe) => recipe.tags))];
 
   return (
     <div className="flex flex-col min-h-screen bg-(--background)">
@@ -21,7 +21,9 @@ export default function Home() {
           <div className="flex flex-row gap-4 align-bottom justify-between mt-6">
             <h2 className="font-sans-serif">Hundreds of recipes, tailored to your taste.</h2>
             <SearchBar />
-            <Button variant="secondary">Add Recipe</Button>
+            <a href="/add-recipe">
+              <Button variant="secondary">Add Recipe</Button>
+            </a>
           </div>
         </div>
 
@@ -32,7 +34,9 @@ export default function Home() {
               {allTags.map((tag, index) => (
                 <div key={index} className="flex items-center">
                   <input type="checkbox" id={`tag-${index}`} className="mr-2" />
-                  <label htmlFor={`tag-${index}`} className="cursor-pointer">{tag}</label>
+                  <label htmlFor={`tag-${index}`} className="cursor-pointer">
+                    {tag}
+                  </label>
                 </div>
               ))}
             </div>
