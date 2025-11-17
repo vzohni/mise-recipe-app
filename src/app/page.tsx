@@ -115,7 +115,8 @@ export default function Home() {
                     className="w-4 h-4 rounded border-gray-300 text-[#2E4442] focus:ring-[#2E4442]"
                   />
                   <span className="text-sm">
-                    {tag} ({recipes.filter((r) => r.tags?.includes(tag)).length})
+                    {tag.charAt(0).toUpperCase() + tag.slice(1)} (
+                    {recipes.filter((r) => r.tags?.map((t: string) => t.toLowerCase()).includes(tag)).length})
                   </span>
                 </label>
               ))}
