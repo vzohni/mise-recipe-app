@@ -34,15 +34,22 @@ export default function Header() {
   return (
     <header>
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between text-xl">
-        <Link href="/">
-          <img src="/Mise_Logo.svg" alt="Mise Logo" />
+        <Link href="/" className="relative flex items-center group">
+          <img
+            src="/Mise_Logo.svg"
+            alt="Mise Logo"
+            className="transition-transform duration-300 group-hover:scale-105"
+          />
+          <span className="absolute left-full ml-3 text-lg font-serif text-(--primary) transition-all duration-300 opacity-0 group-hover:opacity-100 whitespace-nowrap">
+            Home
+          </span>
         </Link>
         <div className="flex flex-row items-center gap-8 font-serif">
           {user ? (
             <>
               <span className="text-(--primary) font-semibold">Hi, {user?.user_metadata?.name}!</span>
               <Link
-                href="/account/1"
+                href="/account"
                 className="bg-linear-to-r from-current to-current bg-size-[0%_2px] bg-no-repeat bg-left-bottom transition-[background-size] duration-300 hover:bg-size-[100%_2px]"
               >
                 Account

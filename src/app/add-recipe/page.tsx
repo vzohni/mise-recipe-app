@@ -92,6 +92,52 @@ export default function AddRecipe() {
     setLoading(true);
     setError("");
 
+    // --- Form Validation ---
+    const { name, author, image, description, prepTime, cookTime, servings, tags, ingredients, instructions } = formData;
+    const finalIngredients = ingredients.map((i) => i.trim()).filter(Boolean);
+    const finalInstructions = instructions.map((i) => i.trim()).filter(Boolean);
+
+    if (!name.trim()) {
+      setError("Recipe Name is required.");
+      setLoading(false);
+      return;
+    }
+    if (!author.trim()) {
+      setError("Author is required.");
+      setLoading(false);
+      return;
+    }
+    if (!description.trim()) {
+      setError("Description is required.");
+      setLoading(false);
+      return;
+    }
+    if (!prepTime || parseInt(prepTime) <= 0) {
+      setError("Prep Time must be a positive number.");
+      setLoading(false);
+      return;
+    }
+    if (!cookTime || parseInt(cookTime) <= 0) {
+      setError("Cook Time must be a positive number.");
+      setLoading(false);
+      return;
+    }
+    if (!servings || parseInt(servings) <= 0) {
+      setError("Servings must be a positive number.");
+      setLoading(false);
+      return;
+    }
+    if (finalIngredients.length === 0) {
+      setError("Please add at least one ingredient.");
+      setLoading(false);
+      return;
+    }
+    if (finalInstructions.length === 0) {
+      setError("Please add at least one instruction step.");
+      setLoading(false);
+      return;
+    }
+
     try {
       // Get current user
       const user = await getCurrentUser();
@@ -111,8 +157,8 @@ export default function AddRecipe() {
         cook_time: parseInt(formData.cookTime),
         servings: parseInt(formData.servings),
         difficulty: formData.difficulty,
-        ingredients: formData.ingredients.filter((i) => i.trim() !== ""), // Remove empty strings
-        instructions: formData.instructions.filter((i) => i.trim() !== ""), // Remove empty strings
+        ingredients: finalIngredients,
+        instructions: finalInstructions,
         author: formData.author,
         tags: formData.tags
           .split(",")
@@ -126,7 +172,7 @@ export default function AddRecipe() {
       if (insertError) throw insertError;
 
       // Success! Redirect to homepage
-      alert("Recipe added successfully!");
+      alert("Recipe added successfully!"); // Consider replacing with a more modern toast notification
       router.push("/");
     } catch (err: any) {
       console.error("Error adding recipe:", err);
@@ -159,6 +205,7 @@ export default function AddRecipe() {
                   onChange={handleInputChange}
                   className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
                   required
+                  placeholder="e.g. Classic Lasagna"
                 />
               </div>
 
@@ -192,6 +239,7 @@ export default function AddRecipe() {
                   onChange={handleInputChange}
                   className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
                   placeholder="https://example.com/image.jpg"
+                  required
                 />
               </div>
 
@@ -208,6 +256,7 @@ export default function AddRecipe() {
                   rows={3}
                   className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
                   required
+                  placeholder="A short and enticing summary of your recipe."
                 />
               </div>
 
@@ -225,6 +274,7 @@ export default function AddRecipe() {
                     onChange={handleInputChange}
                     className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
                     required
+                    min="0"
                   />
                 </div>
 
@@ -241,6 +291,7 @@ export default function AddRecipe() {
                     onChange={handleInputChange}
                     className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
                     required
+                    min="0"
                   />
                 </div>
 
@@ -257,6 +308,7 @@ export default function AddRecipe() {
                     onChange={handleInputChange}
                     className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
                     required
+                    min="1"
                   />
                 </div>
               </div>
@@ -367,7 +419,7 @@ export default function AddRecipe() {
               {/* Error Message */}
               {error && <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">{error}</div>}
               {/* Submit Button */}
-              <div className="pt-4">
+              <div className="pt-4 text-center">
                 <Button type="submit" className="w-full">
                   Add Recipe
                 </Button>
