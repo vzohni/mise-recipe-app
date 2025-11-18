@@ -12,6 +12,7 @@ interface User {
 }
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
   console.log(user);
@@ -38,13 +39,14 @@ export default function Header() {
           <img
             src="/Mise_Logo.svg"
             alt="Mise Logo"
-            className="transition-transform duration-300 group-hover:scale-105"
+            className="h-10 md:h-12 transition-transform duration-300 group-hover:scale-105"
           />
           <span className="absolute left-full ml-3 text-lg font-serif text-(--primary) transition-all duration-300 opacity-0 group-hover:opacity-100 whitespace-nowrap">
             Home
           </span>
         </Link>
-        <div className="flex flex-row items-center gap-8 font-serif">
+        {/* Desktop Menu */}
+        <div className="hidden md:flex flex-row items-center gap-8 font-serif">
           {user ? (
             <>
               <span className="text-(--primary) font-semibold">Hi, {user?.user_metadata?.name}!</span>
@@ -76,7 +78,52 @@ export default function Header() {
             </Link>
           )}
         </div>
+        {/* Hamburger Button */}
+        <div className="md:hidden">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
+            className="p-2 text-(--primary)"
+          >
+            <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+              />
+            </svg>
+          </button>
+        </div>
       </nav>
+
+      {/* Mobile Menu */}
+      <div
+        className={`
+          md:hidden bg-white transition-all duration-300 ease-in-out shadow-lg
+          ${isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"}
+        `}
+      >
+        <div className="px-4 py-4">
+          {user ? (
+            <>
+              <span className="text-(--primary) font-semibold w-full border-b pb-2 block mb-4 font-serif">
+                Hi, {user?.user_metadata?.name}!
+              </span>
+              <div className="flex flex-col items-start gap-4 font-serif text-lg">
+                <Link href="/account" className="hover:text-(--primary)">Account</Link>
+                <Link href="/add-recipe" className="hover:text-(--primary)">Add Recipe</Link>
+                <button onClick={handleSignOut} className="hover:text-(--primary) text-left">Logout</button>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-start gap-4 font-serif text-lg">
+              <Link href="/login" className="hover:text-(--primary)">Login</Link>
+            </div>
+          )}
+        </div>
+      </div>
+
       <div className="container mx-auto">
         <hr className="bg-(--primary)" />
         <hr className="bg-(--primary)" />

@@ -2,7 +2,7 @@
 
 import Button from "@/components/Button";
 import { useState } from "react";
-import { signIn, signUp } from "@/lib/auth"; 
+import { signIn, signUp } from "@/lib/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Login() {
@@ -50,19 +50,22 @@ export default function Login() {
   };
 
   return (
-    <div className="flex-row h-screen flex">
-      <div className="w-1/2 bg-(--tan) align-bottom justify-end flex flex-col px-20 gap-6 text-center">
-        <a href="/" className="absolute top-5 left-10">
-          <img src="/Mise_Logo_White.svg" alt="" />
-        </a>
-
-        <h1 className="text-4xl leading-2 font-semibold text-(--primary)">Find Your Next Dish</h1>
-        <h2 className="font-sans-serif">Hundreds of recipes, to your taste</h2>
-        <div className="">
-          <img src="/chef.png" alt="" />
+    <div className="flex flex-col md:flex-row min-h-screen">
+      <div className="w-full md:w-1/2 bg-(--tan) flex flex-col pt-6 md:pl-10 md:pr-10 text-center">
+        <div className="self-center mb-6 md:self-start">
+          <a href="/">
+            <img src="/Mise_Logo_White.svg" alt="Mise Logo" />
+          </a>
+        </div>
+        <div className="grow gap-3 flex flex-col justify-center">
+          <h1 className="text-2xl leading-2 font-semibold text-(--primary) md:text-4xl">Find Your Next Dish</h1>
+          <h2 className="font-sans-serif md:mt-2">Hundreds of recipes, to your taste</h2>
+        </div>
+        <div className="mt-4 flex justify-center">
+          <img src="/chef.png" alt="Chef illustration" className="object-contain max-h-[25vh] md:max-h-full" />
         </div>
       </div>
-      <div className="w-1/2 flex items-center justify-center px-20">
+      <div className="w-full md:w-1/2 flex items-center justify-center px-6 md:px-20 md:py-12 py-6">
         <div className="w-full max-w-md">
           {!isSignUp ? (
             // Login Form

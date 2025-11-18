@@ -20,8 +20,8 @@ export default async function RecipePage({ params }: { params: { slug: string } 
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto px-4 flex flex-col mb-20 flex-1">
-        <section className="w-full grid grid-cols-1 md:grid-cols-2  mt-8 items-start h-full bg-(--tan) rounded-xl overflow-hidden">
+      <main className="container mx-auto px-4 flex flex-col mb-10 flex-1">
+        <section className="w-full grid grid-cols-1 md:grid-cols-2 mt-8 items-start h-full bg-(--tan) rounded-xl overflow-hidden">
           <div className="relative p-6 h-full bg-tan align-middle flex flex-col justify-center">
             <FavoriteButton
               recipeId={String(recipe.id)}
@@ -71,9 +71,9 @@ export default async function RecipePage({ params }: { params: { slug: string } 
           </div>
         </section>
 
-        <div className="w-3/5 mx-auto mt-6   p-6  ">
+        <div className="md:w-3/5 mx-auto md:my-6 p-6">
           <section className="mb-6">
-            <h2 className="text-lg font-semibold ">Ingredients</h2>
+            <h2 className="text-lg font-semibold mb-2">Ingredients</h2>
             <ul className="grid grid-cols-2 gap-x-6 gap-y-2 list-disc list-inside">
               {recipe?.ingredients?.length ? (
                 recipe.ingredients.map((ingredient: string, index: number) => (
@@ -92,8 +92,8 @@ export default async function RecipePage({ params }: { params: { slug: string } 
             <ol className="space-y-4">
               {recipe?.instructions?.length ? (
                 recipe.instructions.map((instruction: string, index: number) => (
-                  <li key={index} className="flex items-start gap-4">
-                    <div className="flex-none w-8 h-8 rounded-full bg-primary text-white grid place-items-center font-medium">
+                  <li key={index} className="flex items-center gap-4">
+                    <div className="flex-none w-8 h-8 rounded-full bg-primary text-white grid place-items-center font-medium bg-(--primary)">
                       {index + 1}
                     </div>
                     <p className=" text-sm leading-relaxed">{instruction}</p>

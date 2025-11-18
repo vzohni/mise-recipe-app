@@ -68,7 +68,7 @@ export default function RecipeCard({
 
   return (
     <Link href={`/recipes/${slug}`} className="block">
-      <div className="flex flex-col w-80 gap-4 rounded-2xl shadow-md hover:shadow-lg transition-shadow bg-white relative">
+      <div className="flex flex-col w-full md:w-80 gap-4 rounded-2xl shadow-md hover:shadow-lg transition-shadow bg-white relative mx-auto">
         {showDeleteButton && onDelete && (
           <button
             onClick={handleDelete}
