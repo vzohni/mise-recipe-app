@@ -14,16 +14,15 @@ const robotoFlex = Roboto_Flex({
 
 export const metadata: Metadata = {
   title: "Mise - Find Your Next Dish",
-  description:
-    "Create, save, and discover recipes. A modern recipe management app built with Next.js and Supabase.",
+  description: "Create, save, and discover recipes. A modern recipe management app built with Next.js and Supabase.",
   keywords: ["recipes", "cooking", "food", "meal planning", "recipe app"],
   authors: [{ name: "Victor Zohni" }],
   creator: "Victor Zohni",
-  metadataBase: new URL("https://mise-recipe-app.vercel.app"), // Update with your actual Vercel URL once deployed
+  metadataBase: new URL("https://mise-recipe-app-w9y9.vercel.app/"), // Updated with vercel url
   openGraph: {
     title: "Mise - Find Your Next Dish",
     description: "Browse, create, and save your favorite recipes.",
-    url: "https://mise-recipe-app.vercel.app",
+    url: "https://mise-recipe-app-w9y9.vercel.app/",
     siteName: "Mise",
     images: [
       {
