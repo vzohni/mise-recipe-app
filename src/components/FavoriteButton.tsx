@@ -48,10 +48,16 @@ export default function FavoriteButton({ recipeId, className }: FavoriteButtonPr
       onClick={handleToggleFavorite}
       aria-pressed={isFavorited}
       aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
-      className={className}
+      className={`${className} group`}
       disabled={isProcessing}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill={isFavorited ? "#ef4444" : "none"} stroke={isFavorited ? "#ef4444" : "currentColor"}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-5 h-5 transition-transform duration-200 ease-out group-active:scale-125"
+        viewBox="0 0 24 24"
+        fill={isFavorited ? "#ef4444" : "none"}
+        stroke={isFavorited ? "#ef4444" : "currentColor"}
+      >
         <path
           d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"
           strokeWidth="1.5"

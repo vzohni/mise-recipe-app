@@ -100,6 +100,12 @@ export default function AccountPage() {
                     tags={recipe.tags || []}
                     showDeleteButton={true}
                     onDelete={handleDeleteRecipe}
+                    isFavorited={favoriteIds.includes(recipe.id)}
+                    onFavoriteToggle={(recipeId, newStatus) => {
+                      setFavoriteIds((prev) =>
+                        newStatus ? [...prev, recipeId] : prev.filter((id) => id !== recipeId)
+                      );
+                    }}
                   />
                 ))}
               </div>

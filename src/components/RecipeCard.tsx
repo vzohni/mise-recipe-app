@@ -101,12 +101,12 @@ export default function RecipeCard({
           onClick={handleFavoriteToggle}
           aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
           aria-pressed={isFavorited}
-          className="absolute top-2 right-4 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer hover:shadow-md transition-all duration-200 ease-in-out hover:bg-(--primary) text-white z-10"
+          className="group absolute top-2 right-4 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer shadow-md transition-all duration-200 ease-in-out bg-(--primary) md:bg-transparent hover:bg-(--primary) text-white z-10"
           disabled={isProcessing}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5"
+            className="w-5 h-5 transition-transform duration-200 ease-out group-active:scale-125"
             viewBox="0 0 24 24"
             fill={isFavorited ? "#ef4444" : "none"}
             stroke={isFavorited ? "#ef4444" : "currentColor"}
