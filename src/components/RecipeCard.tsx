@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 
@@ -13,57 +14,38 @@ interface RecipeCardProps {
 }
 
 export default function RecipeCard({ slug, image, title, author, date, tags }: RecipeCardProps) {
+  const [isFavorited, setIsFavorited] = useState(false);
+
+  const handleFavoriteToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsFavorited((prev) => !prev);
+    // Add favorite logic here (e.g. call API / update parent state)
+    console.log(`Toggled favorite for ${title}. New state: ${!isFavorited}`);
+  };
+
   return (
-    <Link href={`/recipes/${slug}`}>
-      <div
-        className="flex flex-col w-80 gap-4 rounded-2xl shadow-md hover:shadow-lg transition-shadow bg-white relative cursor-pointer"
-        onClick={() => console.log(`Clicked ${title}`)}
-      >
+    <Link href={`/recipes/${slug}`} className="block">
+      <div className="flex flex-col w-80 gap-4 rounded-2xl shadow-md hover:shadow-lg transition-shadow bg-white relative">
         <button
-          className="absolute top-2 right-4 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer  hover:shadow-md transition-shadow"
-          onClick={(e) => {
-            e.stopPropagation();
-            const btn = e.currentTarget as HTMLButtonElement;
-            const isFav = btn.dataset.favorited === "true";
-
-            if (isFav) {
-              // set back to white filled heart
-              btn.dataset.favorited = "false";
-              btn.setAttribute("aria-pressed", "false");
-              btn.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#ffffff" stroke="#e5e7eb" stroke-width="1.2" aria-hidden="true">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-        `;
-            } else {
-              // set to red filled heart
-              btn.dataset.favorited = "true";
-              btn.setAttribute("aria-pressed", "true");
-              btn.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#ef4444" aria-hidden="true">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-        `;
-            }
-
-            // Add favorite logic here (e.g. call API / update parent state)
-          }}
-          aria-label="Toggle favorite"
-          data-favorited="false"
-          aria-pressed="false"
+          onClick={handleFavoriteToggle}
+          aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
+          aria-pressed={isFavorited}
+          className="absolute top-2 right-4 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer hover:shadow-md transition-all duration-200 ease-in-out hover:bg-(--primary) text-white z-10"
         >
-          {/* initial white heart (will be replaced by innerHTML on click) */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
+            className="w-5 h-5"
             viewBox="0 0 24 24"
-            fill="#ffffff"
-            stroke="#e5e7eb"
-            strokeWidth="1.2"
-            aria-hidden="true"
+            fill={isFavorited ? "#ef4444" : "none"}
+            stroke={isFavorited ? "#ef4444" : "currentColor"}
           >
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            <path
+              d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
         <img src={image} alt={title} className="w-full h-48 object-cover rounded-t-2xl" />
@@ -71,14 +53,14 @@ export default function RecipeCard({ slug, image, title, author, date, tags }: R
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="text-(--primary) rounded-full text-sm bg-white px-3 py-1 font-serif font-semibold text-transform: capitalize"
+              className="text-primary rounded-full text-sm bg-white px-3 py-1 font-serif font-semibold text-transform: capitalize"
             >
               {tag}
             </span>
           ))}
         </div>
         <div className="text-center pb-5">
-          <h1 className="text-2xl font-serif font-bold text-(--primary)">{title}</h1>
+          <h1 className="text-2xl font-serif font-bold text-primary">{title}</h1>
           <p className="text-sm text-gray-600">
             By {author} - {formatDate(date)}
           </p>

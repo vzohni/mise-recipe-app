@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { dummyRecipes } from "@/data/recipes";
+import FavoriteButton from "@/components/FavoriteButton";
 import { supabase } from "@/lib/supabase";
 import { formatDate } from "@/lib/utils";
 
@@ -23,34 +24,17 @@ export default async function RecipePage({ params }: { params: { slug: string } 
   //const recipe = recipes?.find((r) => String(r.slug) === slug);
 
   return (
-    <div className="flex flex-col min-h-screen bg-(--background)">
+    <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 flex flex-col mb-20 flex-1">
         <section className="w-full grid grid-cols-1 md:grid-cols-2  mt-8 items-start h-full">
-          <div className="relative p-6 h-full bg-(--tan) align-middle flex flex-col justify-center">
-            <button
-              type="button"
-              aria-pressed="false"
-              aria-label="Add to favorites"
-              className="absolute top-5 right-5 bg-(--primary) text-white w-11 h-11 rounded-full grid place-items-center shadow-md"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path
-                  d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
+          <div className="relative p-6 h-full bg-tan align-middle flex flex-col justify-center">
+            <FavoriteButton
+              recipeId={recipe.id}
+              className="absolute top-5 right-5 bg-primary text-white w-11 h-11 rounded-full grid place-items-center shadow-md cursor-pointer hover:shadow-lg transition-shadow bg-(--primary)"
+            />
 
-            <h1 className="text-3xl font-semibold text-(--primary)">{recipe ? recipe.title : "Recipe not found"}</h1>
+            <h1 className="text-3xl font-semibold text-primary">{recipe ? recipe.title : "Recipe not found"}</h1>
             <p className="text-sm  mt-2">
               {recipe?.author ? `By ${recipe.author}` : "Unknown author"} •{" "}
               {recipe?.created_at ? formatDate(recipe.created_at) : "Unknown date"}
@@ -66,7 +50,10 @@ export default async function RecipePage({ params }: { params: { slug: string } 
             <div className="mt-4 flex flex-wrap gap-2">
               {recipe?.tags?.length ? (
                 recipe.tags.map((tag, i) => (
-                  <span key={i} className="text-sm bg-(--primary) text-white px-3 py-1 rounded-full font-serif text-transform: capitalize">
+                  <span
+                    key={i}
+                    className="text-sm bg-primary text-white px-3 py-1 rounded-full font-serif text-transform: capitalize"
+                  >
                     {tag}
                   </span>
                 ))
@@ -112,7 +99,7 @@ export default async function RecipePage({ params }: { params: { slug: string } 
               {recipe?.instructions?.length ? (
                 recipe.instructions.map((instruction: string, index: number) => (
                   <li key={index} className="flex items-start gap-4">
-                    <div className="flex-none w-8 h-8 rounded-full bg-(--primary) text-white grid place-items-center font-medium">
+                    <div className="flex-none w-8 h-8 rounded-full bg-primary text-white grid place-items-center font-medium">
                       {index + 1}
                     </div>
                     <p className=" text-sm leading-relaxed">{instruction}</p>
