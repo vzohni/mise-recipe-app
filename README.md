@@ -44,4 +44,4 @@ src/
 
 ## Contact
 
-Victor Zohni - [Your Email/LinkedIn]
+Victor Zohni - [victorzohni.com](https://www.victorzohni.com/)
