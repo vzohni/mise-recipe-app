@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import RecipeCard from "@/components/RecipeCard";
 import SearchBar from "@/components/SearchBar";
-import { dummyRecipes } from "@/data/recipes";
-import Link from "next/link";
+import { getUserFavoriteIds } from "@/lib/favorites";
+import { getCurrentUser } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 
@@ -17,10 +17,12 @@ export default function Home() {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+  const [user, setUser] = useState<any>(null);
 
   // Fetch all recipes on mount
   useEffect(() => {
-    fetchRecipes();
+    loadData();
   }, []);
 
   // Debounce search query
@@ -39,7 +41,12 @@ export default function Home() {
     applyFilters();
   }, [debouncedSearchQuery, selectedTags, recipes]);
 
-  async function fetchRecipes() {
+  async function loadData() {
+    // Get user
+    const currentUser = await getCurrentUser();
+    setUser(currentUser);
+
+    // Fetch recipes
     const { data, error } = await supabase.from("recipes").select("*").order("created_at", { ascending: false });
 
     if (error) {
@@ -48,6 +55,13 @@ export default function Home() {
       setRecipes(data || []);
       setFilteredRecipes(data || []);
     }
+
+    // Fetch user's favorites if logged in
+    if (currentUser) {
+      const ids = await getUserFavoriteIds(currentUser.id);
+      setFavoriteIds(ids);
+    }
+
     setLoading(false);
   }
 
@@ -74,7 +88,9 @@ export default function Home() {
   }
 
   function toggleTag(tag: string) {
-    setSelectedTags((prev) => (prev.includes(tag.toLowerCase()) ? prev.filter((t) => t !== tag.toLowerCase()) : [...prev, tag.toLowerCase()]));
+    setSelectedTags((prev) =>
+      prev.includes(tag.toLowerCase()) ? prev.filter((t) => t !== tag.toLowerCase()) : [...prev, tag.toLowerCase()]
+    );
   }
 
   // Get unique tags from all recipes
@@ -130,6 +146,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredRecipes.map((recipe) => (
                   <RecipeCard
+                    id={recipe.id}
                     key={recipe.id}
                     slug={recipe.slug}
                     image={recipe.image_url}
@@ -137,6 +154,12 @@ export default function Home() {
                     author={recipe.author}
                     date={recipe.created_at}
                     tags={recipe.tags || []}
+                    isFavorited={favoriteIds.includes(recipe.id)}
+                    onFavoriteToggle={(recipeId, newStatus) => {
+                      setFavoriteIds((prev) =>
+                        newStatus ? [...prev, recipeId] : prev.filter((id) => id !== recipeId)
+                      );
+                    }}
                   />
                 ))}
               </div>

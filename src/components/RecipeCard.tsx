@@ -1,28 +1,54 @@
 "use client";
 
-import { useState } from "react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
+import { useState } from "react";
+import { getCurrentUser } from "@/lib/auth";
+import { toggleFavorite } from "@/lib/favorites";
 
 interface RecipeCardProps {
+  id: string;
   slug: string;
   image: string;
   title: string;
   author: string;
   date: string;
   tags: string[];
+  isFavorited?: boolean;
+  onFavoriteToggle?: (recipeId: string, newStatus: boolean) => void;
 }
 
-export default function RecipeCard({ slug, image, title, author, date, tags }: RecipeCardProps) {
-  const [isFavorited, setIsFavorited] = useState(false);
+export default function RecipeCard({
+  id,
+  slug,
+  image,
+  title,
+  author,
+  date,
+  tags,
+  isFavorited = false,
+  onFavoriteToggle,
+}: RecipeCardProps) {
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleFavoriteToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
+  async function handleFavoriteToggle(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    setIsFavorited((prev) => !prev);
-    // Add favorite logic here (e.g. call API / update parent state)
-    console.log(`Toggled favorite for ${title}. New state: ${!isFavorited}`);
-  };
+
+    if (isProcessing) return;
+
+    const user = await getCurrentUser();
+    if (!user) {
+      alert("Please login to favorite recipes");
+      window.location.href = "/login";
+      return;
+    }
+
+    setIsProcessing(true);
+    const { isFavorited: newStatus } = await toggleFavorite(user.id, id);
+    onFavoriteToggle?.(id, newStatus);
+    setIsProcessing(false);
+  }
 
   return (
     <Link href={`/recipes/${slug}`} className="block">
@@ -32,6 +58,7 @@ export default function RecipeCard({ slug, image, title, author, date, tags }: R
           aria-label={isFavorited ? "Remove from favorites" : "Add to favorites"}
           aria-pressed={isFavorited}
           className="absolute top-2 right-4 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer hover:shadow-md transition-all duration-200 ease-in-out hover:bg-(--primary) text-white z-10"
+          disabled={isProcessing}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -1,6 +1,5 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { dummyRecipes } from "@/data/recipes";
 import FavoriteButton from "@/components/FavoriteButton";
 import { supabase } from "@/lib/supabase";
 import { formatDate } from "@/lib/utils";
@@ -11,27 +10,22 @@ interface RecipePageProps {
 
 export default async function RecipePage({ params }: { params: { slug: string } }) {
   // Fetch recipe by slug
-
   const { data: recipe, error } = await supabase.from("recipes").select("*").eq("slug", params.slug).single();
 
   if (error || !recipe) {
-    //notFound(); // Shows 404 page
     console.error("Error fetching recipe:", error);
     return null;
   }
-  // You can fetch your recipe data here based on `slug`
-  // For example, fetch from an API or database
-  //const recipe = recipes?.find((r) => String(r.slug) === slug);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 flex flex-col mb-20 flex-1">
-        <section className="w-full grid grid-cols-1 md:grid-cols-2  mt-8 items-start h-full">
+        <section className="w-full grid grid-cols-1 md:grid-cols-2  mt-8 items-start h-full bg-(--tan) rounded-xl overflow-hidden">
           <div className="relative p-6 h-full bg-tan align-middle flex flex-col justify-center">
             <FavoriteButton
-              recipeId={recipe.id}
-              className="absolute top-5 right-5 bg-primary text-white w-11 h-11 rounded-full grid place-items-center shadow-md cursor-pointer hover:shadow-lg transition-shadow bg-(--primary)"
+              recipeId={String(recipe.id)}
+              className="absolute top-5 right-5 bg-(--primary) text-white w-11 h-11 rounded-full grid place-items-center shadow-md cursor-pointer hover:shadow-lg transition-shadow"
             />
 
             <h1 className="text-3xl font-semibold text-primary">{recipe ? recipe.title : "Recipe not found"}</h1>
@@ -52,7 +46,7 @@ export default async function RecipePage({ params }: { params: { slug: string } 
                 recipe.tags.map((tag, i) => (
                   <span
                     key={i}
-                    className="text-sm bg-primary text-white px-3 py-1 rounded-full font-serif text-transform: capitalize"
+                    className="text-sm bg-(--primary) text-white px-3 py-1 rounded-full font-serif text-transform: capitalize"
                   >
                     {tag}
                   </span>
