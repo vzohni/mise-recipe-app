@@ -31,7 +31,7 @@ export default function AccountPage() {
       const { data: recipes } = await supabase
         .from("recipes")
         .select("*")
-        .eq("author", currentUser.user_metadata?.name || currentUser.email)
+        .eq("user_id", currentUser.id)
         .order("created_at", { ascending: false });
 
       setUserRecipes(recipes || []);
@@ -46,6 +46,21 @@ export default function AccountPage() {
     }
 
     setLoading(false);
+  }
+
+  async function handleDeleteRecipe(recipeId: string) {
+    if (!window.confirm("Are you sure you want to delete this recipe? This action cannot be undone.")) {
+      return;
+    }
+
+    const { error } = await supabase.from("recipes").delete().eq("id", recipeId);
+
+    if (error) {
+      console.error("Error deleting recipe:", error);
+      alert("Failed to delete recipe. Please try again.");
+    } else {
+      setUserRecipes((prev) => prev.filter((recipe) => recipe.id !== recipeId));
+    }
   }
 
   if (loading) {
@@ -83,6 +98,8 @@ export default function AccountPage() {
                     author={recipe.author}
                     date={recipe.created_at}
                     tags={recipe.tags || []}
+                    showDeleteButton={true}
+                    onDelete={handleDeleteRecipe}
                   />
                 ))}
               </div>

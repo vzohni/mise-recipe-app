@@ -8,6 +8,8 @@ import { getCurrentUser } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { generateSlug } from "@/lib/utils";
+import { RECIPE_TAGS } from "@/lib/constants";
+import DynamicInputList from "@/components/DynamicInputList";
 
 type Difficulty = "easy" | "medium" | "hard";
 
@@ -23,7 +25,7 @@ interface RecipeFormData {
   ingredients: string[];
   instructions: string[];
   author: string;
-  tags: string;
+  tags: string[];
 }
 
 export default function AddRecipe() {
@@ -39,7 +41,7 @@ export default function AddRecipe() {
     ingredients: [""] as string[],
     instructions: [""] as string[],
     author: "",
-    tags: "",
+    tags: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -58,6 +60,13 @@ export default function AddRecipe() {
     };
     fetchUserAndSetAuthor();
   }, []);
+
+  const toggleTag = (tag: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: prev.tags.includes(tag) ? prev.tags.filter((t) => t !== tag) : [...prev.tags, tag],
+    }));
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -93,7 +102,8 @@ export default function AddRecipe() {
     setError("");
 
     // --- Form Validation ---
-    const { name, author, image, description, prepTime, cookTime, servings, tags, ingredients, instructions } = formData;
+    const { name, author, image, description, prepTime, cookTime, servings, tags, ingredients, instructions } =
+      formData;
     const finalIngredients = ingredients.map((i) => i.trim()).filter(Boolean);
     const finalInstructions = instructions.map((i) => i.trim()).filter(Boolean);
 
@@ -149,21 +159,19 @@ export default function AddRecipe() {
 
       // Prepare data for Supabase (match your database column names)
       const recipeData = {
-        slug: generateSlug(formData.name),
         title: formData.name,
+        slug: generateSlug(formData.name),
         description: formData.description,
         image_url: formData.image || null,
         prep_time: parseInt(formData.prepTime),
         cook_time: parseInt(formData.cookTime),
         servings: parseInt(formData.servings),
         difficulty: formData.difficulty,
-        ingredients: finalIngredients,
-        instructions: finalInstructions,
+        ingredients: formData.ingredients.filter((i) => i.trim() !== ""),
+        instructions: formData.instructions.filter((i) => i.trim() !== ""),
+        user_id: user.id,
         author: formData.author,
-        tags: formData.tags
-          .split(",")
-          .map((tag) => tag.trim().toLowerCase())
-          .filter((tag) => tag), // Split and clean tags
+        tags: formData.tags,
       };
 
       // Insert into Supabase
@@ -190,7 +198,7 @@ export default function AddRecipe() {
         <main className="container mx-auto px-4 flex flex-col mb-20 flex-1 justify-center items-center">
           <h1 className="text-3xl font-semibold mt-8 text-(--primary) mb-6">Add Recipe</h1>
 
-          <div className="bg-(--tan) p-8 rounded-lg w-full max-w-2xl">
+          <div className="bg-(--tan) p-8 rounded-lg w-full max-w-3xl">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Recipe Name */}
               <div>
@@ -203,9 +211,10 @@ export default function AddRecipe() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
+                  className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent) placeholder-gray-400"
                   required
                   placeholder="e.g. Classic Lasagna"
+                  maxLength={100}
                 />
               </div>
 
@@ -220,9 +229,10 @@ export default function AddRecipe() {
                   name="author"
                   value={formData.author}
                   onChange={handleInputChange}
-                  className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
+                  className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent) placeholder-gray-400"
                   required
                   placeholder="The recipe creator's name"
+                  maxLength={100}
                 />
               </div>
 
@@ -237,9 +247,10 @@ export default function AddRecipe() {
                   name="image"
                   value={formData.image}
                   onChange={handleInputChange}
-                  className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
+                  className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent) placeholder-gray-400"
                   placeholder="https://example.com/image.jpg"
                   required
+                  maxLength={2048}
                 />
               </div>
 
@@ -254,9 +265,10 @@ export default function AddRecipe() {
                   value={formData.description}
                   onChange={handleInputChange}
                   rows={3}
-                  className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
+                  className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent) placeholder-gray-400"
                   required
                   placeholder="A short and enticing summary of your recipe."
+                  maxLength={500}
                 />
               </div>
 
@@ -275,6 +287,7 @@ export default function AddRecipe() {
                     className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
                     required
                     min="0"
+                    max="9999"
                   />
                 </div>
 
@@ -292,6 +305,7 @@ export default function AddRecipe() {
                     className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
                     required
                     min="0"
+                    max="9999"
                   />
                 </div>
 
@@ -309,6 +323,7 @@ export default function AddRecipe() {
                     className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
                     required
                     min="1"
+                    max="999"
                   />
                 </div>
               </div>
@@ -333,88 +348,46 @@ export default function AddRecipe() {
 
               {/* Tags */}
               <div>
-                <label htmlFor="tags" className="block text-sm font-medium text-(--primary) mb-2">
-                  Tags
-                </label>
-                <input
-                  type="text"
-                  id="tags"
-                  name="tags"
-                  value={formData.tags}
-                  onChange={handleInputChange}
-                  className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
-                  placeholder="e.g. quick, dessert, vegan"
-                />
-                <p className="text-xs text-gray-500 mt-1">Separate tags with a comma.</p>
+                <label className="block text-sm font-medium text-(--primary) mb-2">Tags (Select all that apply)</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border border-gray-300 rounded-md max-h-64 overflow-y-auto">
+                  {RECIPE_TAGS.map((tag) => (
+                    <label key={tag} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.tags.includes(tag)}
+                        onChange={() => toggleTag(tag)}
+                        className="w-4 h-4 rounded border-gray-300 text-[#2E4442] focus:ring-[#2E4442]"
+                      />
+                      <span className="text-sm">{tag}</span>
+                    </label>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Selected: {formData.tags.join(", ") || "None"}</p>
               </div>
 
               {/* Ingredients */}
               <div>
-                <label className="block text-sm font-medium text-(--primary) mb-2">Ingredients</label>
-                {formData.ingredients.map((ingredient, index) => (
-                  <div key={index} className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={ingredient}
-                      onChange={(e) => handleArrayInputChange(index, "ingredients", e.target.value)}
-                      placeholder={`Ingredient ${index + 1}`}
-                      className="flex-1 bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeItem("ingredients", index)}
-                      className="cursor-pointer px-3 py-2 bg-red-700 text-white rounded-md hover:bg-red-600"
-                      disabled={formData.ingredients.length === 1}
-                    >
-                      -
-                    </button>
-                    {index === formData.ingredients.length - 1 && (
-                      <button
-                        type="button"
-                        onClick={() => addItem("ingredients")}
-                        className="cursor-pointer px-3 py-2 bg-(--primary) text-white rounded-md hover:bg-(--hover)"
-                      >
-                        +
-                      </button>
-                    )}
-                  </div>
-                ))}
+                <DynamicInputList
+                  label="Ingredients"
+                  field="ingredients"
+                  items={formData.ingredients}
+                  onItemChange={handleArrayInputChange}
+                  onAddItem={addItem}
+                  onRemoveItem={removeItem}
+                />
               </div>
 
               {/* Instructions */}
               <div>
-                <label className="block text-sm font-medium text-(--primary) mb-2">Instructions</label>
-                {formData.instructions.map((instruction, index) => (
-                  <div key={index} className="mb-4">
-                    <div className="flex gap-2 mb-2">
-                      <span className="font-medium">Step {index + 1}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeItem("instructions", index)}
-                        className="px-2 bg-red-700 text-white rounded-md hover:bg-red-600 text-sm"
-                        disabled={formData.instructions.length === 1}
-                      >
-                        -
-                      </button>
-                      {index === formData.instructions.length - 1 && (
-                        <button
-                          type="button"
-                          onClick={() => addItem("instructions")}
-                          className="px-2 bg-(--primary) text-white rounded-md hover:bg-(--hover) text-sm"
-                        >
-                          +
-                        </button>
-                      )}
-                    </div>
-                    <textarea
-                      value={instruction}
-                      onChange={(e) => handleArrayInputChange(index, "instructions", e.target.value)}
-                      placeholder={`Step ${index + 1} instructions...`}
-                      rows={2}
-                      className="w-full bg-white px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--accent)"
-                    />
-                  </div>
-                ))}
+                <DynamicInputList
+                  label="Instructions"
+                  field="instructions"
+                  items={formData.instructions}
+                  onItemChange={handleArrayInputChange}
+                  onAddItem={addItem}
+                  onRemoveItem={removeItem}
+                  isInstruction={true}
+                />
               </div>
               {/* Error Message */}
               {error && <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">{error}</div>}
