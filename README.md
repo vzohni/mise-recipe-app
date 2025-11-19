@@ -2,7 +2,7 @@
 
 A full-stack recipe application built with modern web technologies. Users can browse, create, and favorite recipes with a clean, intuitive interface.
 
-**Built by Victor Zohni** | [Live Demo](your-vercel-url-here)
+**Built by Victor Zohni** | [Live Demo](https://mise-recipe-app-w9y9.vercel.app/)
 
 ## Features
 
