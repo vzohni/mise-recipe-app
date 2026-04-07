@@ -1,20 +1,54 @@
+"use client";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FavoriteButton from "@/components/FavoriteButton";
 import { supabase } from "@/lib/supabase";
 import { formatDate } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
-interface RecipePageProps {
-  params: { slug: string };
-}
+export default function RecipePage() {
+  const params = useParams();
+  const slug = params.slug as string;
+  const [recipe, setRecipe] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-export default async function RecipePage({ params }: { params: { slug: string } }) {
-  // Fetch recipe by slug
-  const { data: recipe, error } = await supabase.from("recipes").select("*").eq("slug", params.slug).single();
+  useEffect(() => {
+    async function fetchRecipe() {
+      const { data, error } = await supabase
+        .from("recipes")
+        .select("*")
+        .eq("slug", slug)
+        .single();
 
-  if (error || !recipe) {
-    console.error("Error fetching recipe:", error);
-    return null;
+      if (error || !data) {
+        console.error("Error fetching recipe:", error);
+        setNotFound(true);
+      } else {
+        setRecipe(data);
+      }
+      setLoading(false);
+    }
+
+    if (slug) fetchRecipe();
+  }, [slug]);
+
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  }
+
+  if (notFound || !recipe) {
+    return (
+      <div className="flex flex-col min-h-screen bg-(--background)">
+        <Header />
+        <main className="container mx-auto px-4 flex-1 flex items-center justify-center">
+          <p className="text-gray-500 text-lg">Recipe not found.</p>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   return (
@@ -28,22 +62,22 @@ export default async function RecipePage({ params }: { params: { slug: string } 
               className="absolute top-5 right-5 bg-(--primary) text-white w-11 h-11 rounded-full grid place-items-center shadow-md cursor-pointer hover:shadow-lg transition-shadow"
             />
 
-            <h1 className="text-3xl font-semibold text-primary">{recipe ? recipe.title : "Recipe not found"}</h1>
-            <p className="text-sm  mt-2">
-              {recipe?.author ? `By ${recipe.author}` : "Unknown author"} •{" "}
-              {recipe?.created_at ? formatDate(recipe.created_at) : "Unknown date"}
+            <h1 className="text-3xl font-semibold text-primary">{recipe.title}</h1>
+            <p className="text-sm mt-2">
+              {recipe.author ? `By ${recipe.author}` : "Unknown author"} •{" "}
+              {recipe.created_at ? formatDate(recipe.created_at) : "Unknown date"}
             </p>
 
             <div className="mt-4">
               <span className="inline-block text-sm rounded-lg font-medium">
-                Prep Time: {recipe?.prep_time ? `${recipe.prep_time} min` : "—"}
+                Prep Time: {recipe.prep_time ? `${recipe.prep_time} min` : "—"}
               </span>
             </div>
-            <p className="leading-relaxed mb-6">{recipe?.description}</p>
+            <p className="leading-relaxed mb-6">{recipe.description}</p>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              {recipe?.tags?.length ? (
-                recipe.tags.map((tag, i) => (
+              {recipe.tags?.length ? (
+                recipe.tags.map((tag: string, i: number) => (
                   <span
                     key={i}
                     className="text-sm bg-(--primary) text-white px-3 py-1 rounded-full font-serif text-transform: capitalize"
@@ -58,11 +92,10 @@ export default async function RecipePage({ params }: { params: { slug: string } 
           </div>
 
           <div className="w-full h-[360px] overflow-hidden bg-gray-800 flex items-center justify-center">
-            {recipe?.image_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
+            {recipe.image_url ? (
               <img
                 src={recipe.image_url}
-                alt={recipe?.title ?? "Recipe image"}
+                alt={recipe.title ?? "Recipe image"}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -75,7 +108,7 @@ export default async function RecipePage({ params }: { params: { slug: string } 
           <section className="mb-6">
             <h2 className="text-lg font-semibold mb-2">Ingredients</h2>
             <ul className="grid grid-cols-2 gap-x-6 gap-y-2 list-disc list-inside">
-              {recipe?.ingredients?.length ? (
+              {recipe.ingredients?.length ? (
                 recipe.ingredients.map((ingredient: string, index: number) => (
                   <li key={index} className="text-sm">
                     {ingredient}
@@ -88,15 +121,15 @@ export default async function RecipePage({ params }: { params: { slug: string } 
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold  mb-3">Instructions</h2>
+            <h2 className="text-lg font-semibold mb-3">Instructions</h2>
             <ol className="space-y-4">
-              {recipe?.instructions?.length ? (
+              {recipe.instructions?.length ? (
                 recipe.instructions.map((instruction: string, index: number) => (
                   <li key={index} className="flex items-center gap-4">
                     <div className="flex-none w-8 h-8 rounded-full bg-primary text-white grid place-items-center font-medium bg-(--primary)">
                       {index + 1}
                     </div>
-                    <p className=" text-sm leading-relaxed">{instruction}</p>
+                    <p className="text-sm leading-relaxed">{instruction}</p>
                   </li>
                 ))
               ) : (

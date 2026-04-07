@@ -2,13 +2,14 @@
 
 import Button from "@/components/Button";
 import React, { useState } from "react";
-import { signIn, signUp } from "@/lib/auth";
+import { signIn, signUp, requestPasswordReset } from "@/lib/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { LoginMessages } from "@/components/LoginMessages";
 
 function LoginFormWrapper() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -54,9 +55,69 @@ function LoginFormWrapper() {
     }
   };
 
+  async function handleForgotPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setMessage("");
+    setLoading(true);
+    try {
+      const redirectTo = `${window.location.origin}/reset-password`;
+      const { error } = await requestPasswordReset(formData.email, redirectTo);
+      if (error) throw error;
+      setMessage("Check your email for a password reset link.");
+    } catch (err) {
+      if (err instanceof Error) setMessage(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="w-full max-w-md">
-      {!isSignUp ? (
+      {isForgotPassword ? (
+        // Forgot Password Form
+        <form onSubmit={handleForgotPassword} className="flex flex-col gap-6">
+          <h2 className="text-2xl font-semibold text-center text-(--primary)">Reset Password</h2>
+          <p className="text-sm text-gray-600 text-center">
+            Enter your email and we'll send you a link to reset your password.
+          </p>
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="reset-email" className="font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              id="reset-email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary)"
+              placeholder="Enter your email"
+            />
+          </div>
+
+          {message && (
+            <p className={`text-sm text-center ${message.includes("Check") ? "text-green-600" : "text-red-500"}`}>
+              {message}
+            </p>
+          )}
+
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Sending..." : "Send Reset Link"}
+          </Button>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => { setIsForgotPassword(false); setMessage(""); }}
+              className="text-sm text-(--primary) hover:underline cursor-pointer"
+            >
+              Back to Login
+            </button>
+          </div>
+        </form>
+      ) : !isSignUp ? (
         // Login Form
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <h2 className="text-2xl font-semibold text-center text-(--primary)">Login</h2>
@@ -94,9 +155,13 @@ function LoginFormWrapper() {
           </div>
 
           <div className="text-right">
-            <a href="#" className="text-sm text-(--primary) hover:underline">
+            <button
+              type="button"
+              onClick={() => { setIsForgotPassword(true); setMessage(""); }}
+              className="text-sm text-(--primary) hover:underline cursor-pointer"
+            >
               Forgot Password?
-            </a>
+            </button>
           </div>
 
           {/* Display server messages from URL and client messages from form submission */}

@@ -23,29 +23,30 @@ export default function AccountPage() {
   }, []);
 
   async function loadUserData() {
-    const currentUser = await getCurrentUser();
-    setUser(currentUser);
+    try {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
 
-    if (currentUser) {
-      // Fetch recipes created by this user
-      const { data: recipes } = await supabase
-        .from("recipes")
-        .select("*")
-        .eq("user_id", currentUser.id)
-        .order("created_at", { ascending: false });
+      if (currentUser) {
+        const { data: recipes } = await supabase
+          .from("recipes")
+          .select("*")
+          .eq("user_id", currentUser.id)
+          .order("created_at", { ascending: false });
 
-      setUserRecipes(recipes || []);
+        setUserRecipes(recipes || []);
 
-      // Fetch user's favorite IDs
-      const ids = await getUserFavoriteIds(currentUser.id);
-      setFavoriteIds(ids);
+        const ids = await getUserFavoriteIds(currentUser.id);
+        setFavoriteIds(ids);
 
-      // Fetch user's favorite recipes (ADD THIS)
-      const favorites = await getUserFavorites(currentUser.id);
-      setFavoriteRecipes(favorites);
+        const favorites = await getUserFavorites(currentUser.id);
+        setFavoriteRecipes(favorites);
+      }
+    } catch (err) {
+      console.error("Unexpected error loading user data:", err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   async function handleDeleteRecipe(recipeId: string) {

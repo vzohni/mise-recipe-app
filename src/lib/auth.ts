@@ -27,8 +27,23 @@ export async function signOut() {
 }
 
 export async function getCurrentUser() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error) {
+    // Invalid/expired refresh token — clear the bad session silently
+    await supabase.auth.signOut();
+    return null;
+  }
   return user;
+}
+
+export async function requestPasswordReset(email: string, redirectTo: string) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo,
+  });
+  return { error };
+}
+
+export async function updatePassword(newPassword: string) {
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  return { error };
 }

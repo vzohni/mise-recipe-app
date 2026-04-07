@@ -15,8 +15,6 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
-  console.log(user);
-
   useEffect(() => {
     checkUser();
   }, []);
@@ -80,11 +78,7 @@ export default function Header() {
         </div>
         {/* Hamburger Button */}
         <div className="md:hidden">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-            className="p-2 text-(--primary)"
-          >
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu" className="p-2 text-(--primary)">
             <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -111,14 +105,22 @@ export default function Header() {
                 Hi, {user?.user_metadata?.name}!
               </span>
               <div className="flex flex-col items-start gap-4 font-serif text-lg">
-                <Link href="/account" className="hover:text-(--primary)">Account</Link>
-                <Link href="/add-recipe" className="hover:text-(--primary)">Add Recipe</Link>
-                <button onClick={handleSignOut} className="hover:text-(--primary) text-left">Logout</button>
+                <Link href="/account" className="hover:text-(--primary)">
+                  Account
+                </Link>
+                <Link href="/add-recipe" className="hover:text-(--primary)">
+                  Add Recipe
+                </Link>
+                <button onClick={handleSignOut} className="hover:text-(--primary) text-left">
+                  Logout
+                </button>
               </div>
             </>
           ) : (
             <div className="flex flex-col items-start gap-4 font-serif text-lg">
-              <Link href="/login" className="hover:text-(--primary)">Login</Link>
+              <Link href="/login" className="hover:text-(--primary)">
+                Login
+              </Link>
             </div>
           )}
         </div>

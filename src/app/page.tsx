@@ -42,28 +42,28 @@ export default function Home() {
   }, [debouncedSearchQuery, selectedTags, recipes]);
 
   async function loadData() {
-    // Get user
+    try {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
 
-    const currentUser = await getCurrentUser();
-    setUser(currentUser);
+      const { data, error } = await supabase.from("recipes").select("*").order("created_at", { ascending: false });
 
-    // Fetch recipes
-    const { data, error } = await supabase.from("recipes").select("*").order("created_at", { ascending: false });
+      if (error) {
+        console.error("Error fetching recipes:", error);
+      } else {
+        setRecipes(data || []);
+        setFilteredRecipes(data || []);
+      }
 
-    if (error) {
-      console.error("Error fetching recipes:", error);
-    } else {
-      setRecipes(data || []);
-      setFilteredRecipes(data || []);
+      if (currentUser) {
+        const ids = await getUserFavoriteIds(currentUser.id);
+        setFavoriteIds(ids);
+      }
+    } catch (err) {
+      console.error("Unexpected error loading data:", err);
+    } finally {
+      setLoading(false);
     }
-
-    // Fetch user's favorites if logged in
-    if (currentUser) {
-      const ids = await getUserFavoriteIds(currentUser.id);
-      setFavoriteIds(ids);
-    }
-
-    setLoading(false);
   }
 
   function applyFilters() {

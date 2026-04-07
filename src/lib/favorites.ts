@@ -45,7 +45,7 @@ export async function getUserFavorites(userId: string) {
     .eq("user_id", userId);
 
   if (error) return [];
-  return data?.map((f) => (f as any).recipes) || [];
+  return data?.map((f) => (f as any).recipes).filter(Boolean) || [];
 }
 
 export async function getUserFavoriteIds(userId: string): Promise<string[]> {

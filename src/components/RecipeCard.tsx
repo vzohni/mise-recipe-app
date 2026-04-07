@@ -67,8 +67,8 @@ export default function RecipeCard({
   }
 
   return (
-    <Link href={`/recipes/${slug}`} className="block">
-      <div className="flex flex-col w-full md:w-80 gap-4 rounded-2xl shadow-md hover:shadow-lg transition-shadow bg-white relative mx-auto">
+    <Link href={`/recipes/${slug}`} className="block h-full">
+      <div className="flex flex-col w-full h-full rounded-2xl shadow-md hover:shadow-lg transition-shadow bg-white relative">
         {showDeleteButton && onDelete && (
           <button
             onClick={handleDelete}
@@ -122,28 +122,28 @@ export default function RecipeCard({
         <img src={image} alt={title} className="w-full h-48 object-cover rounded-t-2xl" />
 
         {/* Container for tags and text */}
-        <div className="flex flex-col items-center px-3 pb-5">
+        <div className="flex flex-col items-center px-3 pb-5 flex-1">
           {/* Tags with negative margin to pull them up */}
-          <div className="flex flex-wrap justify-center gap-2 -mt-8 mb-4">
-            {tags.slice(0, 5).map((tag, index) => (
+          <div className="flex flex-nowrap justify-center gap-2 -mt-8 mb-4">
+            {tags.slice(0, 2).map((tag, index) => (
               <span
                 key={index}
-                className="text-primary rounded-full text-sm bg-white px-3 py-1 font-serif font-semibold text-transform: capitalize shadow-sm"
+                className="text-primary rounded-full text-sm bg-white px-3 py-1 font-serif font-semibold text-transform: capitalize shadow-sm whitespace-nowrap"
               >
                 {tag}
               </span>
             ))}
-            {tags.length > 5 && (
-              <span
-                className="text-primary rounded-full text-sm bg-white px-3 py-1 font-serif font-semibold shadow-sm"
-              >
-                +{tags.length - 5}
+            {tags.length > 2 && (
+              <span className="text-primary rounded-full text-sm bg-white px-3 py-1 font-serif font-semibold shadow-sm whitespace-nowrap">
+                +{tags.length - 2}
               </span>
             )}
           </div>
           {/* Text content */}
-          <h1 className="text-2xl font-serif font-bold text-primary text-center">{title}</h1>
-          <p className="text-sm text-gray-600 text-center">By {author} - {formatDate(date)}</p>
+          <div className="flex-1 flex flex-col items-center justify-center gap-1">
+            <h1 className="text-2xl font-serif font-bold text-primary text-center line-clamp-2">{title}</h1>
+            <p className="text-sm text-gray-600 text-center">By {author} - {formatDate(date)}</p>
+          </div>
         </div>
       </div>
     </Link>
