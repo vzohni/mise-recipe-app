@@ -1,6 +1,7 @@
 "use client";
 
 import { getCurrentUser, signOut } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -17,6 +18,14 @@ export default function Header() {
 
   useEffect(() => {
     checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        router.push("/reset-password");
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   async function checkUser() {

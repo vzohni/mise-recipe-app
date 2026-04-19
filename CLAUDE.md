@@ -87,3 +87,4 @@ Tailwind usage: `text-(--primary)`, `bg-(--tan)`, etc. (CSS variable shorthand s
 - `alert()` used in several places (add recipe success, delete confirm, login prompt) — should be replaced with toast notifications
 - Many `any` types used for user and recipe data — could be typed more strictly
 - ~~"Forgot Password" link on login page is a dead `href="#"`~~ — **Fixed**: Forgot Password flow implemented with Supabase `resetPasswordForEmail`. Redirects to `/reset-password` which listens for the `PASSWORD_RECOVERY` auth event.
+- `console.log(user)` in `Header.tsx` — **Removed**
