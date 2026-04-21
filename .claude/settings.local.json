@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf .next)",
+      "Bash(npm run *)",
+      "Bash(rm -rf node_modules)",
+      "Bash(npm install *)"
+    ]
+  }
+}
