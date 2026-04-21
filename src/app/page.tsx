@@ -9,6 +9,7 @@ import { getUserFavoriteIds } from "@/lib/favorites";
 import { getCurrentUser } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -19,6 +20,14 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [user, setUser] = useState<any>(null);
+  const router = useRouter();
+
+  // Redirect to reset-password if a recovery token lands on this page
+  useEffect(() => {
+    if (window.location.hash.includes("type=recovery")) {
+      router.replace("/reset-password" + window.location.hash);
+    }
+  }, []);
 
   // Fetch all recipes on mount
   useEffect(() => {
